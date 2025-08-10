@@ -1,23 +1,36 @@
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
-def calculate_all(actual, predicted):
-    mae = mean_absolute_error(actual, predicted)
-    rmse = mean_squared_error(actual, predicted, squared=False)
-    r2 = r2_score(actual, predicted)
-    mape = np.mean(np.abs((actual - predicted) / (actual + 1))) * 100
-    total_actual = actual.sum()
-    total_predicted = predicted.sum()
-    total_accuracy_pct = (total_actual / total_predicted * 100) if total_predicted > 0 else 0
-    correlation = np.corrcoef(actual, predicted)[0, 1] if len(actual) > 1 else 0
+def evaluate_forecast(y_true, y_pred):
+    """
+    Оценивает прогноз по четырём метрикам:
+    - Total Consumption Accuracy
+    - Trend Correlation
+    - Total Actual
+    - Total Predicted
+    """
+
+    # Суммарное потребление
+    total_actual = np.sum(y_true)
+    total_predicted = np.sum(y_pred)
+
+    # Точность по суммарному потреблению
+    accuracy = 100 - (abs(total_predicted - total_actual) / total_actual * 100)
+
+    # Корреляция трендов
+    if len(y_true) > 1 and len(y_pred) > 1:
+        trend_corr = np.corrcoef(y_true, y_pred)[0, 1]
+    else:
+        trend_corr = np.nan
+
+    # Вывод
+    print(f"✅ Total Consumption Accuracy: {accuracy:.1f}%")
+    print(f"✅ Trend Correlation: {trend_corr:.2f}")
+    print(f"📈 Total Actual: {total_actual:.0f}")
+    print(f"📈 Total Predicted: {total_predicted:.0f}")
 
     return {
-        "MAE": mae,
-        "RMSE": rmse,
-        "R2": r2,
-        "MAPE": mape,
-        "Total_Actual": total_actual,
-        "Total_Predicted": total_predicted,
-        "Total_Accuracy_Pct": total_accuracy_pct,
-        "Correlation": correlation
+        "total_consumption_accuracy": accuracy,
+        "trend_correlation": trend_corr,
+        "total_actual": total_actual,
+        "total_predicted": total_predicted
     }
