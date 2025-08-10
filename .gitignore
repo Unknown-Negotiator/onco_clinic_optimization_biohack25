@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+
+# Environments
+.env
+.venv/
+*.conda
+*.egg-info/
+
+# PyCharm
+.idea/
+
+# Output folders
+runs/
+data/
