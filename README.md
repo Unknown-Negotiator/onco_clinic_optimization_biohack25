@@ -71,6 +71,42 @@ Each run creates a folder under runs/{experiment_name}/{timestamp}/ with:
 
 ---
 
+## 🔮 Inference: Forecast Future Drug Usage
+
+The `biohack_forecast/infer.py` script allows you to quickly forecast drug usage for a specified time horizon based on historical CSV data.
+
+### Usage
+python biohack_forecast/infer.py \
+    --drug-paths data/drug_2024.csv data/drug_2025.csv \
+    --horizon 30 \
+    --lookback 180 \
+    --date-col date \
+    --dose-col total_dose \
+    --drug-name "Блеомицин" \
+    --drug-col drug_name \
+    --output-dir runs
+
+### Parameters
+| Parameter       | Type   | Default       | Description |
+|-----------------|--------|---------------|-------------|
+| --drug-paths    | list   | **required**  | One or more CSV files with historical drug usage. |
+| --horizon       | int    | 30            | Number of days to forecast after the last date in the data. |
+| --lookback      | int    | 180           | Number of past days to train the model on. |
+| --date-col      | str    | "date"        | Name of the date column in your CSVs. |
+| --dose-col      | str    | "total_dose"  | Name of the dose/quantity column in your CSVs. |
+| --drug-name     | str    | None          | Filter to a specific drug (by name in --drug-col). If omitted, forecasts all drugs combined. |
+| --drug-col      | str    | "drug_name"   | Name of the drug column in your CSVs. |
+| --output-dir    | str    | "runs"        | Directory to save forecast.csv and forecast.png. |
+
+### Outputs
+- forecast.csv — combined history + forecast table:
+  date,y_true,y_pred,split
+  2024-06-01,120.0,,history
+  ...
+  2024-12-01,,130.5,forecast
+
+- forecast.png — plot of historical data with forecasted future.
+
 ## 🧠 Model Selection Logic
 When model_type: auto in the config, the forecaster chooses:
 - XGBoost — if high-volume & regular usage (< 20% zero days and mean > 1000) or generally regular (< 30% zero days)
