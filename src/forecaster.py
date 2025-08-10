@@ -10,12 +10,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import xgboost as xgb
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 from datetime import datetime, timedelta
-
 
 # --- Plot style (same as Colab) ---
 plt.style.use('seaborn-v0_8')
@@ -279,9 +277,8 @@ class LastMonthForecaster:
         )
         self.trained_model.fit(X_tr, y_tr)
 
-        val_pred = np.maximum(self.trained_model.predict(X_val), 0)
-        print(f"XGBoost internal validation: MAE={mean_absolute_error(y_val, val_pred):.2f}, "
-              f"R²={r2_score(y_val, val_pred):.3f}")
+        # Silent internal validation (no metrics printed)
+        _ = np.maximum(self.trained_model.predict(X_val), 0)
         return feature_cols
 
     def train_arima_model(self, train_data: pd.DataFrame) -> Tuple[int, int, int]:
@@ -350,38 +347,30 @@ class LastMonthForecaster:
         return preds
 
     # ----------------------------
-    # Metrics & plots
+    # Metrics (minimal)
     # ----------------------------
     def calculate_metrics(self, actual: np.ndarray, predicted: np.ndarray) -> Dict[str, float]:
-        mae = mean_absolute_error(actual, predicted)
-        rmse = np.sqrt(mean_squared_error(actual, predicted))
-        r2 = r2_score(actual, predicted)
-        mape = float(np.mean(np.abs((actual - predicted) / (actual + 1))) * 100)
+        total_actual = float(np.nansum(actual))
+        total_pred = float(np.nansum(predicted))
 
-        total_actual = float(actual.sum())
-        total_pred = float(predicted.sum())
-        accuracy_pct = (total_actual / total_pred * 100) if total_pred > 0 else 0.0
-        corr = float(np.corrcoef(actual, predicted)[0, 1]) if len(actual) > 1 else 0.0
+        if total_actual > 0:
+            total_accuracy = 100.0 - (abs(total_pred - total_actual) / total_actual * 100.0)
+        else:
+            total_accuracy = 0.0
 
-        print("\n📊 LAST MONTH PREDICTION METRICS:")
-        print(f"MAE: {mae:.2f}")
-        print(f"RMSE: {rmse:.2f}")
-        print(f"R²: {r2:.3f}")
-        print(f"MAPE: {mape:.1f}%")
-        print(f"Total actual: {total_actual:.0f}")
-        print(f"Total predicted: {total_pred:.0f}")
-        print(f"Total accuracy: {accuracy_pct:.1f}%")
-        print(f"Correlation: {corr:.3f}")
+        trend_corr = float(np.corrcoef(actual, predicted)[0, 1]) if len(actual) > 1 else np.nan
+
+        # Exactly four lines:
+        print(f"✅ Total Consumption Accuracy: {total_accuracy:.1f}%")
+        print(f"✅ Trend Correlation: {trend_corr:.2f}")
+        print(f"📈 Total Actual: {total_actual:.0f}")
+        print(f"📈 Total Predicted: {total_pred:.0f}")
 
         return {
-            'MAE': mae,
-            'RMSE': rmse,
-            'R2': r2,
-            'MAPE': mape,
-            'Total_Actual': total_actual,
-            'Total_Predicted': total_pred,
-            'Total_Accuracy_Pct': accuracy_pct,
-            'Correlation': corr,
+            "total_consumption_accuracy": total_accuracy,
+            "trend_correlation": trend_corr,
+            "total_actual": total_actual,
+            "total_predicted": total_pred
         }
 
     def plot_forecast_vs_actual_and_cumulative(
@@ -480,7 +469,7 @@ def forecast_last_month_multiple_data(
 
     print("\n✅ ANALYSIS COMPLETE!")
     print(f"Model used: {forecaster.selected_model.upper()}")
-    print(f"Last {days_to_predict} days predicted with {metrics['Total_Accuracy_Pct']:.1f}% accuracy")
+    print(f"Last {days_to_predict} days predicted with {metrics['total_consumption_accuracy']:.1f}% accuracy")
 
     return forecaster, metrics, preds, test_data
 
