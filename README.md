@@ -50,14 +50,14 @@ Place your CSV files in data/ or update configs/last_month.yaml paths.
 
 **DATA USED FOR THIS PROJECT IS PRIVATE, CANNOT BE PUBLICALLY SHARED**
 
-'''text
+```text
 Example:
 data/
   drug_2024_sample_4k.csv
   drug_2025_sample_4k.csv
   event_2024_anonim_sample_4k.csv
   event_2025_sample_4k.csv
-'''
+```
 
 ### Run experiment
 python main.py configs/last_month.yaml
