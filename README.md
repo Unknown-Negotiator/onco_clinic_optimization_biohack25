@@ -78,6 +78,7 @@ When model_type: auto in the config, the forecaster chooses:
 
 ## 🚀 Predicting co-used drugs clusters
 
+**Code for this part of the project is in notebooks/hackathon.ipynb**
 
 This project analyzes prescription data for forecasting future drug usage volumes.
 
