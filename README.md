@@ -62,6 +62,8 @@ data/
 ### Run experiment
 python main.py configs/last_month.yaml
 
+### Interactive Examples in notebooks/Single_Drug_Forecasting.ipynb
+
 ---
 
 ## 📁 Outputs
