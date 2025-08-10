@@ -82,7 +82,7 @@ Below are anonymized previews (first 5 rows) of each dataset used in the project
 
 ---
 
-### **drug_2024_sample_4k.csv** — Drug prescriptions  
+### **drug_2024_sample_4k.csv** — Drugs prescribed and administered
 Contains all prescribed drugs with dose, unit, administration method, and execution status.
 ```markdown
 |      id |   event_id |   client_id | mnn                        | concentration   |   dose | measure   | execution_date       | method            |   status | status_name        |
