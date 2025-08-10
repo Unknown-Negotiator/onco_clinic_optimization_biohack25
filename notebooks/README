@@ -1,1 +1,3 @@
-
+* Single_Drug_Forecasting.ipynb - example of prediction for a single drug
+* hakaton.ipynb - clustering approach
+* optimize_hosp.ipynb - hospital stay inneficiency analysis
