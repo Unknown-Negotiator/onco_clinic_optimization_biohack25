@@ -1,0 +1,15 @@
+experiment_name: "venetoclax_last_month"
+drug_name: "Венетоклакс"
+target_metric: "total_dose"
+model_type: "auto"   # or "xgboost" or "arima"
+days_to_predict: 30
+max_training_days: 180
+filter_zero_dose: true
+
+drug_paths:
+  - data/drug_2024.csv
+  - data/drug_2025.csv
+
+event_paths:
+  - data/event_2024_anonim.csv
+  - data/event_2025_anonim.csv
