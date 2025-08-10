@@ -73,41 +73,76 @@ Each run creates a folder under runs/{experiment_name}/{timestamp}/ with:
 
 ---
 
-## 🔮 Inference: Forecast Future Drug Usage
+## 🔮 Future Forecasting from Historical CSVs
 
-The `src/infer.py` script allows you to quickly forecast drug usage for a specified time horizon based on historical CSV data.
+This tool predicts **future drug consumption** from any number of historical CSV files.  
+It works both as a **Python function** and as a **command-line tool**.
 
-### Usage
-python src/infer.py \
+---
+
+### CLI Usage
+python infer.py \
     --drug-paths data/drug_2024.csv data/drug_2025.csv \
     --horizon 30 \
     --lookback 180 \
-    --date-col date \
-    --dose-col total_dose \
+    --model auto \
+    --target total_dose \
     --drug-name "Блеомицин" \
-    --drug-col drug_name \
     --output-dir runs
 
-### Parameters
-| Parameter       | Type   | Default       | Description |
-|-----------------|--------|---------------|-------------|
-| --drug-paths    | list   | **required**  | One or more CSV files with historical drug usage. |
-| --horizon       | int    | 30            | Number of days to forecast after the last date in the data. |
-| --lookback      | int    | 180           | Number of past days to train the model on. |
-| --date-col      | str    | "date"        | Name of the date column in your CSVs. |
-| --dose-col      | str    | "total_dose"  | Name of the dose/quantity column in your CSVs. |
-| --drug-name     | str    | None          | Filter to a specific drug (by name in --drug-col). If omitted, forecasts all drugs combined. |
-| --drug-col      | str    | "drug_name"   | Name of the drug column in your CSVs. |
-| --output-dir    | str    | "runs"        | Directory to save forecast.csv and forecast.png. |
+Arguments:
+| Argument       | Description                                             | Default      |
+|----------------|---------------------------------------------------------|--------------|
+| --drug-paths   | One or more CSV files with historical drug data.         | **required** |
+| --horizon      | Number of days to forecast after the last date in data.  | 30           |
+| --lookback     | Number of most recent days to use for training.          | 180          |
+| --model        | Forecast model: auto, xgboost, or arima.                 | auto         |
+| --target       | Column name with dose/quantity values.                   | total_dose   |
+| --drug-name    | Optional — forecast only this drug.                      | All drugs    |
+| --output-dir   | Where to save forecast results.                          | runs         |
 
-### Outputs
-- forecast.csv — combined history + forecast table:
-  date,y_true,y_pred,split
-  2024-06-01,120.0,,history
-  ...
-  2024-12-01,,130.5,forecast
+---
 
-- forecast.png — plot of historical data with forecasted future.
+### Python API
+from infer import forecast_from_csv
+
+df = forecast_from_csv(
+    drug_csv_paths=["data/drug_2024.csv", "data/drug_2025.csv"],
+    horizon_days=30,
+    lookback_days=180,
+    model_type="auto",
+    target_metric="total_dose",
+    drug_name="Блеомицин",
+    output_dir="runs"
+)
+
+print(df.tail())
+
+---
+
+### Output Files
+For each run, a new folder is created:
+runs/20250810_153045_Блеомицин/
+    ├── forecast.csv   # History + forecast data
+    ├── forecast.png   # Plot of history and forecast
+    ├── meta.json      # Model parameters & run info
+
+---
+
+### Column Detection
+If your CSV uses different column names, infer.py will try to auto-detect them.  
+Recognized names include:
+
+- Date: date, Дата, дата, DAY, DATE
+- Dose: total_dose, dose, quantity, Количество, sum_dose
+- Drug: drug_name, Препарат, Наименование
+
+If detection fails, you can pass a column map to the Python function:
+forecast_from_csv(
+    drug_csv_paths=[...],
+    columns_map={"date": "my_date_col", "dose": "my_dose_col", "drug": "drug_col_name"}
+)
+
 
 ## 🧠 Model Selection Logic
 When model_type: auto in the config, the forecaster chooses:
