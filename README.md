@@ -76,7 +76,7 @@ Each run creates a folder under runs/{experiment_name}/{timestamp}/ with:
 The `biohack_forecast/infer.py` script allows you to quickly forecast drug usage for a specified time horizon based on historical CSV data.
 
 ### Usage
-python biohack_forecast/infer.py \
+python src/infer.py \
     --drug-paths data/drug_2024.csv data/drug_2025.csv \
     --horizon 30 \
     --lookback 180 \
