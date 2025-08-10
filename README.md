@@ -48,6 +48,8 @@ pip install -r requirements.txt
 ### Prepare your data
 Place your CSV files in data/ or update configs/last_month.yaml paths.
 
+DATA USED FOR THIS PROJECT IS PRIVATE, CANNOT BE PUBLICALLY SHARED
+
 Example:
 data/
   drug_2024_sample_4k.csv
