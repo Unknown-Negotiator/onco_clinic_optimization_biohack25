@@ -12,10 +12,11 @@ It supports:
 ---
 
 ## 📂 Project Structure
+```text
 biohack_forecast/
 ├─ configs/                 # Experiment configs (YAML)
 ├─ data/                    # CSV data (ignored by Git)
-├─ runs/                    # Auto‑created experiment outputs
+├─ runs/                    # Auto-created experiment outputs
 ├─ src/
 │  ├─ forecaster.py         # LastMonthForecaster class + core logic
 │  ├─ data_loader.py        # Data reading helpers
@@ -25,6 +26,7 @@ biohack_forecast/
 ├─ main.py                  # CLI entrypoint
 ├─ requirements.txt
 └─ README.md
+```
 
 ## ⚙️ Installation
 
