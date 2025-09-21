@@ -1,5 +1,7 @@
 # Onco Clinic Optimization — Biohack 2025
 
+## [📑 Project Presentation](https://docs.google.com/presentation/d/1KO_lyNug27twq0gLhsYv_eTQH3qBdne1Ws_budwsqTo/edit?usp=sharing)
+
 ## 📌 Overview
 This project forecasts drug consumption, services usage, and hospitalization flow for an oncohematological clinic using real-world data.  
 It supports:
